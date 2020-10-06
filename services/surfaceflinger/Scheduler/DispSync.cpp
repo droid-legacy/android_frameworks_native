@@ -521,6 +521,7 @@ void DispSync::resetLocked() {
     mNumResyncSamples = 0;
     mFirstResyncSample = 0;
     mNumResyncSamplesSincePresent = 0;
+    mNumPresentWithoutResyncSamples = 0;
     mThread->unlockModel();
     resetErrorLocked();
 }
@@ -538,13 +539,14 @@ bool DispSync::addPresentFence(const std::shared_ptr<FenceTime>& fenceTime) {
 
     updateErrorLocked();
 
-    /* Based on the binaries in the ROM from z3DD3r @ xda developers.
+    /* Based on the binaries in the ROM from z3DD3r @ xda developers and Lineage Gerrit Issue 70070.
      * https://forum.xda-developers.com/google-nexus-5/orig-development/rom-lineageos-17-1-nexus-5-hammerhead-t4039273
+     * https://review.lineageos.org/c/LineageOS/android_frameworks_native/+/70070/1/services/surfaceflinger/DispSync.cpp#423
      * Prevents very slow display of boot animation and UI before first display turn off */
     if (mNumResyncSamples == 0) {
-        z3DD3rBootLagFix++;
-        if (z3DD3rBootLagFix > 8) {
-            z3DD3rBootLagFix = 0;
+        mNumPresentWithoutResyncSamples++;
+        if (mNumPresentWithoutResyncSamples > 8) {
+            mNumPresentWithoutResyncSamples = 0;
             return false;
         }
     }
