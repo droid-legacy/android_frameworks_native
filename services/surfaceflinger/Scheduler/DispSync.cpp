@@ -538,6 +538,17 @@ bool DispSync::addPresentFence(const std::shared_ptr<FenceTime>& fenceTime) {
 
     updateErrorLocked();
 
+    /* Based on the binaries in the ROM from z3DD3r @ xda developers.
+     * https://forum.xda-developers.com/google-nexus-5/orig-development/rom-lineageos-17-1-nexus-5-hammerhead-t4039273
+     * Prevents very slow display of boot animation and UI before first display turn off */
+    if (mNumResyncSamples == 0) {
+        z3DD3rBootLagFix++;
+        if (z3DD3rBootLagFix > 8) {
+            z3DD3rBootLagFix = 0;
+            return false;
+        }
+    }
+
     return !mModelUpdated || mError > kErrorThreshold;
 }
 

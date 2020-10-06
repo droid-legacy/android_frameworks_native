@@ -246,6 +246,7 @@ private:
     size_t mFirstResyncSample = 0;
     size_t mNumResyncSamples = 0;
     int mNumResyncSamplesSincePresent;
+    size_t z3DD3rBootLagFix = 0;
 
     // These member variables store information about the present fences used
     // to validate the currently computed model.
