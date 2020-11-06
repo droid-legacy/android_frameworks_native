@@ -3025,8 +3025,10 @@ void SurfaceFlinger::postComposition(nsecs_t callTime) {
         return;
     }
 
+#ifndef DISABLE_POSTRENDER_CLEANUP
     // Cleanup any outstanding resources due to rendering a prior frame.
     getRenderEngine().cleanupPostRender();
+#endif
 
     {
         std::lock_guard lock(mTexturePoolMutex);
