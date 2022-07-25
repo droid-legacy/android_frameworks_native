@@ -18,6 +18,7 @@ cc_defaults {
         "-Wunused",
         "-Wunreachable-code",
         "-Wconversion",
+	"-O3",
     ],
 }
 
@@ -33,6 +34,7 @@ cc_defaults {
         "-DLOG_TAG=\"SurfaceFlinger\"",
         "-DGL_GLEXT_PROTOTYPES",
         "-DEGL_EGLEXT_PROTOTYPES",
+	"-O3",
     ],
     shared_libs: [
         "android.hardware.configstore-utils",
@@ -214,6 +216,7 @@ cc_defaults {
     ],
     cflags: [
         "-DLOG_TAG=\"SurfaceFlinger\"",
+	"-O3",
     ],
     shared_libs: [
         "android.frameworks.displayservice@1.0",
