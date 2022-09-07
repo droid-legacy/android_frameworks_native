@@ -26,6 +26,10 @@ jobs:
         git fetch https://github.com/LineageOS/android_frameworks_native.git lineage-18.1
         git rebase FETCH_HEAD
         git push -f
+        git checkout lineage-17.1
+        git fetch https://github.com/LineageOS/android_frameworks_native.git lineage-17.1
+        git rebase FETCH_HEAD
+        git push -f
       env:
         GITHUB_EMAIL: ${{ secrets.EMAIL }}
         GITHUB_TOKEN: ${{ secrets.TOKEN }}
