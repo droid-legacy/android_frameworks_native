@@ -3021,7 +3021,9 @@ void SurfaceFlinger::postComposition(nsecs_t callTime) {
     mTimeStats->recordDisplayEventConnectionCount(sfConnections + appConnections);
 
     if (isDisplayConnected && !defaultDisplay->isPoweredOn()) {
+#ifndef DISABLE_POSTRENDER_CLEANUP
         getRenderEngine().cleanupPostRender();
+#endif
         return;
     }
 
