@@ -874,6 +874,13 @@ status_t BufferQueueConsumer::setConsumerCanWait(bool canWait) {
     return NO_ERROR;
 }
 
+status_t BufferQueueConsumer::getAutoRefresh(bool* outAutoRefresh) const {
+    ATRACE_CALL();
+    std::lock_guard lock(mCore->mMutex);
+    *outAutoRefresh = mCore->mAutoRefresh;
+    return NO_ERROR;
+}
+
 status_t BufferQueueConsumer::dumpState(const String8& prefix, String8* outResult) const {
     struct passwd* pwd = getpwnam("shell");
     uid_t shellUid = pwd ? pwd->pw_uid : 0;

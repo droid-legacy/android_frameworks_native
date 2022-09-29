@@ -103,6 +103,13 @@ void BufferQueue::ProxyConsumerListener::addAndGetFrameTimestamps(
     }
 }
 
+void BufferQueue::ProxyConsumerListener::onConfigurationChanged() {
+    sp<ConsumerListener> listener(mConsumerListener.promote());
+    if (listener != nullptr) {
+        listener->onConfigurationChanged();
+    }
+}
+
 void BufferQueue::createBufferQueue(sp<IGraphicBufferProducer>* outProducer,
         sp<IGraphicBufferConsumer>* outConsumer,
         bool consumerIsSurfaceFlinger) {

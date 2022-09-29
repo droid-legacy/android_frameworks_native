@@ -285,6 +285,11 @@ public:
     // commands.
     virtual status_t setConsumerCanWait(bool /*canWait*/) = 0;
 
+    // Checks whether auto-refresh mode is enabled.  If true, it indicates to
+    // the consumer that it should attempt to acquire buffers even if it is not
+    // aware of any being available.
+    virtual status_t getAutoRefresh(bool* /*outAutoRefresh*/) const = 0;
+
     // Provide backwards source compatibility
     void dumpState(String8& result, const char* prefix) {
         String8 returned;

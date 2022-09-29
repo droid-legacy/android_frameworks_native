@@ -176,6 +176,10 @@ public:
     status_t setConsumerUsageBits(uint64_t usage);
     void onBufferAvailable(const BufferItem& item) EXCLUDES(mImagesMutex);
 
+    // Returns true if the producer enabled auto-refresh mode on the underlying
+    // BufferQueue.
+    bool getAutoRefresh() const;
+
 protected:
     // abandonLocked overrides the ConsumerBase method to clear
     // mCurrentTextureImage in addition to the ConsumerBase behavior.
@@ -237,6 +241,7 @@ private:
     void onDisconnect() override;
     void onSidebandStreamChanged() override;
     void addAndGetFrameTimestamps(const NewFrameEventsEntry*, FrameEventHistoryDelta*) override {}
+    void onConfigurationChanged() override;
 
     // computeCurrentTransformMatrixLocked computes the transform matrix for the
     // current texture.  It uses mCurrentTransform and the current GraphicBuffer

@@ -167,6 +167,10 @@ bool BufferQueueLayer::hasFrameUpdate() const {
     return mQueuedFrames > 0;
 }
 
+void BufferQueueLayer::latchBufferConsumerFlags() {
+    mDrawingState.autoRefresh = mConsumer->getAutoRefresh();
+}
+
 status_t BufferQueueLayer::updateTexImage(bool& recomputeVisibleRegions, nsecs_t latchTime,
                                           nsecs_t expectedPresentTime) {
     // This boolean is used to make sure that SurfaceFlinger's shadow copy

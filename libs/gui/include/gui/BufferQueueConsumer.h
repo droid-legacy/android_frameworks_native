@@ -155,6 +155,9 @@ public:
     // See IGraphicBufferConsumer::setConsumerCanWait
     virtual status_t setConsumerCanWait(bool canWait) override;
 
+    // See IGraphicBufferConsumer::getAutoRefresh
+    virtual status_t getAutoRefresh(bool* outAutoRefresh) const override;
+
     // Functions required for backwards compatibility.
     // These will be modified/renamed in IGraphicBufferConsumer and will be
     // removed from this class at that time. See b/13306289.

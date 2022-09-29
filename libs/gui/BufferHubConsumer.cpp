@@ -152,6 +152,11 @@ status_t BufferHubConsumer::setConsumerCanWait(bool /*canWait*/) {
     return INVALID_OPERATION;
 }
 
+status_t BufferHubConsumer::getAutoRefresh(bool* /*outAutoRefresh*/) const {
+    ALOGE("BufferHubConsumer::getAutoRefresh: not implemented.");
+    return INVALID_OPERATION;
+}
+
 status_t BufferHubConsumer::dumpState(const String8& /*prefix*/, String8* /*outResult*/) const {
     ALOGE("BufferHubConsumer::dumpState: not implemented.");
     return INVALID_OPERATION;

@@ -441,7 +441,7 @@ bool BufferLayer::shouldPresentNow(nsecs_t expectedPresentTime) const {
     }
 
     // AutoRefresh layers and sideband streams should always be presented
-    if (getSidebandStreamChanged() || getAutoRefresh()) {
+    if (getSidebandStreamChanged() || getAutoRefresh() || getConfigurationChanged()) {
         return true;
     }
 
@@ -458,6 +458,11 @@ bool BufferLayer::shouldPresentNow(nsecs_t expectedPresentTime) const {
 bool BufferLayer::latchBuffer(bool& recomputeVisibleRegions, nsecs_t latchTime,
                               nsecs_t expectedPresentTime) {
     ATRACE_CALL();
+
+    bool configChanged = true;
+    if (mConfigurationChanged.compare_exchange_strong(configChanged, false)) {
+        latchBufferConsumerFlags();
+    }
 
     bool refreshRequired = latchSidebandStream(recomputeVisibleRegions);
 
@@ -526,7 +531,8 @@ bool BufferLayer::latchBuffer(bool& recomputeVisibleRegions, nsecs_t latchTime,
 }
 
 bool BufferLayer::hasReadyFrame() const {
-    return hasFrameUpdate() || getSidebandStreamChanged() || getAutoRefresh();
+    return hasFrameUpdate() || getSidebandStreamChanged() || getAutoRefresh() ||
+            getConfigurationChanged();
 }
 
 uint32_t BufferLayer::getEffectiveScalingMode() const {
@@ -798,6 +804,12 @@ bool BufferLayer::bufferNeedsFiltering() const {
 
 const std::shared_ptr<renderengine::ExternalTexture>& BufferLayer::getExternalTexture() const {
     return mBufferInfo.mBuffer;
+}
+
+void BufferLayer::onConfigurationChanged() {
+    if (!mConfigurationChanged.exchange(true)) {
+        mFlinger->onLayerUpdate();
+    }
 }
 
 } // namespace android

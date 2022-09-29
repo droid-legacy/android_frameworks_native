@@ -69,6 +69,8 @@ public:
 protected:
     void gatherBufferInfo() override;
 
+    void latchBufferConsumerFlags() override;
+
     // -----------------------------------------------------------------------
     // Interface implementation for BufferLayerConsumer::ContentsChangedListener
     // -----------------------------------------------------------------------

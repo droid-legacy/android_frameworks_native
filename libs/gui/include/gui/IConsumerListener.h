@@ -90,6 +90,10 @@ public:
     // WARNING: This method can only be called when the BufferQueue is in the consumer's process.
     virtual void addAndGetFrameTimestamps(const NewFrameEventsEntry* /*newTimestamps*/,
                                           FrameEventHistoryDelta* /*outDelta*/) {}
+
+    // Notifies the consumer that some of the BufferQueue flags may have changed without the
+    // producer queuing a new buffer.
+    virtual void onConfigurationChanged() {}
 };
 
 #ifndef NO_BINDER

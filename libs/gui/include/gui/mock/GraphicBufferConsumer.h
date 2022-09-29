@@ -50,6 +50,7 @@ public:
     MOCK_METHOD2(getOccupancyHistory, status_t(bool, std::vector<OccupancyTracker::Segment>*));
     MOCK_METHOD0(discardFreeBuffers, status_t());
     MOCK_METHOD1(setConsumerCanWait, status_t(bool));
+    MOCK_CONST_METHOD1(getAutoRefresh, status_t(bool*));
     MOCK_CONST_METHOD2(dumpState, status_t(const String8&, String8*));
 };
 

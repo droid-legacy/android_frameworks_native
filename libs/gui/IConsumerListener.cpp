@@ -31,7 +31,8 @@ enum class Tag : uint32_t {
     ON_FRAME_DEQUEUED,
     ON_FRAME_CANCELLED,
     ON_FRAME_DETACHED,
-    LAST = ON_FRAME_DETACHED,
+    ON_CONFIGURATION_CHANGED,
+    LAST = ON_CONFIGURATION_CHANGED,
 };
 
 } // Anonymous namespace
@@ -85,6 +86,11 @@ public:
                                   FrameEventHistoryDelta* /*outDelta*/) override {
         LOG_ALWAYS_FATAL("IConsumerListener::addAndGetFrameTimestamps cannot be proxied");
     }
+
+    void onConfigurationChanged() override {
+        callRemoteAsync<decltype(&IConsumerListener::onConfigurationChanged)>(
+                Tag::ON_CONFIGURATION_CHANGED);
+    }
 };
 
 // Out-of-line virtual method definitions to trigger vtable emission in this translation unit (see
@@ -116,6 +122,8 @@ status_t BnConsumerListener::onTransact(uint32_t code, const Parcel& data, Parce
             return callLocalAsync(data, reply, &IConsumerListener::onFrameCancelled);
         case Tag::ON_FRAME_DETACHED:
             return callLocalAsync(data, reply, &IConsumerListener::onFrameDetached);
+        case Tag::ON_CONFIGURATION_CHANGED:
+            return callLocalAsync(data, reply, &IConsumerListener::onConfigurationChanged);
     }
 }
 

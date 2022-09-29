@@ -1589,9 +1589,15 @@ status_t BufferQueueProducer::setAutoRefresh(bool autoRefresh) {
     ATRACE_CALL();
     BQ_LOGV("setAutoRefresh: %d", autoRefresh);
 
-    std::lock_guard<std::mutex> lock(mCore->mMutex);
-
-    mCore->mAutoRefresh = autoRefresh;
+    sp<IConsumerListener> listener;
+    {
+        std::lock_guard<std::mutex> lock(mCore->mMutex);
+        mCore->mAutoRefresh = autoRefresh;
+        listener = mCore->mConsumerListener;
+    }
+    if (listener != nullptr) {
+        listener->onConfigurationChanged();
+    }
     return NO_ERROR;
 }
 

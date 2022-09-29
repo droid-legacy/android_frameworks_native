@@ -418,6 +418,12 @@ std::shared_ptr<FenceTime> BufferLayerConsumer::getCurrentFenceTime() const {
     return mCurrentFenceTime;
 }
 
+bool BufferLayerConsumer::getAutoRefresh() const {
+    bool autoRefresh = false;
+    mConsumer->getAutoRefresh(&autoRefresh);
+    return autoRefresh;
+}
+
 void BufferLayerConsumer::freeBufferLocked(int slotIndex) {
     BLC_LOGV("freeBufferLocked: slotIndex=%d", slotIndex);
     std::lock_guard<std::mutex> lock(mImagesMutex);
@@ -469,6 +475,17 @@ void BufferLayerConsumer::onBufferAvailable(const BufferItem& item) {
                                                                  Usage::READABLE);
         }
     }
+}
+
+void BufferLayerConsumer::onConfigurationChanged() {
+    Mutex::Autolock lock(mMutex);
+
+    if (mAbandoned) {
+        // Nothing to do if we're already abandoned.
+        return;
+    }
+
+    mLayer->onConfigurationChanged();
 }
 
 void BufferLayerConsumer::abandonLocked() {

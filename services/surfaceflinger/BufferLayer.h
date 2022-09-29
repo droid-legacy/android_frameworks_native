@@ -90,6 +90,8 @@ public:
                      nsecs_t expectedPresentTime) override;
     bool hasReadyFrame() const override;
 
+    bool getConfigurationChanged() const { return mConfigurationChanged; }
+
     // Returns the current scaling mode
     uint32_t getEffectiveScalingMode() const override;
 
@@ -179,6 +181,9 @@ protected:
 
     std::atomic<bool> mSidebandStreamChanged{false};
 
+    // See IConsumerListener::onConfigurationChanged
+    virtual void latchBufferConsumerFlags(){};
+
 private:
     virtual bool fenceHasSignaled() const = 0;
     virtual bool framePresentTimeIsCurrent(nsecs_t expectedPresentTime) const = 0;
@@ -217,6 +222,9 @@ private:
     std::unique_ptr<compositionengine::LayerFECompositionState> mCompositionState;
 
     FloatRect computeSourceBounds(const FloatRect& parentBounds) const override;
+
+    void onConfigurationChanged() override;
+    std::atomic<bool> mConfigurationChanged{false};
 };
 
 } // namespace android

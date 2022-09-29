@@ -96,6 +96,9 @@ public:
     // See |IGraphicBufferConsumer::setConsumerCanWait|
     virtual status_t setConsumerCanWait(bool /*canWait*/) override;
 
+    // See |IGraphicBufferConsumer::getAutoRefresh|
+    virtual status_t getAutoRefresh(bool* /*outAutoRefresh*/) const override;
+
     // See |IGraphicBufferConsumer::dumpState|
     status_t dumpState(const String8& prefix, String8* outResult) const override;
 

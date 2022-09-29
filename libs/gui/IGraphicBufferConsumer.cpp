@@ -53,7 +53,8 @@ enum class Tag : uint32_t {
     DISCARD_FREE_BUFFERS,
     DUMP_STATE,
     SET_CONSUMER_CAN_WAIT,
-    LAST = SET_CONSUMER_CAN_WAIT,
+    GET_AUTO_REFRESH,
+    LAST = GET_AUTO_REFRESH,
 };
 
 } // Anonymous namespace
@@ -173,6 +174,11 @@ public:
         using Signature = decltype(&IGraphicBufferConsumer::setConsumerCanWait);
         return callRemote<Signature>(Tag::SET_CONSUMER_CAN_WAIT, canWait);
     }
+
+    status_t getAutoRefresh(bool* outAutoRefresh) const override {
+        return callRemote<decltype(&IGraphicBufferConsumer::getAutoRefresh)>(Tag::GET_AUTO_REFRESH,
+                                                                             outAutoRefresh);
+    }
 };
 
 // Out-of-line virtual method definition to trigger vtable emission in this translation unit
@@ -232,6 +238,8 @@ status_t BnGraphicBufferConsumer::onTransact(uint32_t code, const Parcel& data, 
         }
         case Tag::SET_CONSUMER_CAN_WAIT:
             return callLocal(data, reply, &IGraphicBufferConsumer::setConsumerCanWait);
+        case Tag::GET_AUTO_REFRESH:
+            return callLocal(data, reply, &IGraphicBufferConsumer::getAutoRefresh);
     }
 }
 

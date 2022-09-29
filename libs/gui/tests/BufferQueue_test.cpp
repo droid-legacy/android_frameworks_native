@@ -1225,6 +1225,44 @@ TEST_F(BufferQueueTest, TestProducerConnectDisconnect) {
     ASSERT_EQ(NO_INIT, mProducer->disconnect(NATIVE_WINDOW_API_CPU));
 }
 
+TEST_F(BufferQueueTest, TestGetAutoRefresh) {
+    createBufferQueue();
+    sp<MockConsumer> dc(new MockConsumer);
+    ASSERT_EQ(OK, mConsumer->consumerConnect(dc, true));
+    IGraphicBufferProducer::QueueBufferOutput output;
+    ASSERT_EQ(OK,
+              mProducer->connect(new StubProducerListener, NATIVE_WINDOW_API_CPU, true, &output));
+
+    bool autoRefresh;
+    ASSERT_EQ(OK, mConsumer->getAutoRefresh(&autoRefresh));
+    ASSERT_FALSE(autoRefresh);
+
+    ASSERT_EQ(OK, mProducer->setSharedBufferMode(true));
+    ASSERT_EQ(OK, mProducer->setAutoRefresh(true));
+
+    // Get a buffer
+    int sharedSlot;
+    sp<Fence> fence;
+    sp<GraphicBuffer> buffer;
+    ASSERT_EQ(IGraphicBufferProducer::BUFFER_NEEDS_REALLOCATION,
+              mProducer->dequeueBuffer(&sharedSlot, &fence, 0, 0, 0, 0, nullptr, nullptr));
+    ASSERT_EQ(OK, mProducer->requestBuffer(sharedSlot, &buffer));
+
+    // Queue the buffer
+    IGraphicBufferProducer::QueueBufferInput input(0, false, HAL_DATASPACE_UNKNOWN,
+                                                   Rect(0, 0, 1, 1),
+                                                   NATIVE_WINDOW_SCALING_MODE_FREEZE, 0,
+                                                   Fence::NO_FENCE);
+    ASSERT_EQ(OK, mProducer->queueBuffer(sharedSlot, input, &output));
+
+    ASSERT_EQ(OK, mConsumer->getAutoRefresh(&autoRefresh));
+    ASSERT_TRUE(autoRefresh);
+
+    mProducer->setAutoRefresh(false);
+    ASSERT_EQ(OK, mConsumer->getAutoRefresh(&autoRefresh));
+    ASSERT_FALSE(autoRefresh);
+}
+
 TEST_F(BufferQueueTest, TestConsumerCannotWait) {
     createBufferQueue();
     sp<MockConsumer> dc(new MockConsumer);
