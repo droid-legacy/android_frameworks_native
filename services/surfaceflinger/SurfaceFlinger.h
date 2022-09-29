@@ -1352,6 +1352,14 @@ private:
 
     bool hasMockHwc() const { return mHwcServiceName == "mock"; }
 
+    // Points to the layer on the default layer stack that was last composited by HWC, or
+    // nullptr if there were zero or more than one such layers. If this layer has shared
+    // buffer and auto refresh flags set, we can avoid the current refresh cycle since no
+    // changes to HWC state are needed.
+    wp<Layer> mCurrentHwcLayer;
+
+    bool updateCurrentHwcLayer();
+
     /*
      * Scheduler
      */

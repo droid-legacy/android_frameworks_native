@@ -531,7 +531,7 @@ bool BufferLayer::latchBuffer(bool& recomputeVisibleRegions, nsecs_t latchTime,
 }
 
 bool BufferLayer::hasReadyFrame() const {
-    return hasFrameUpdate() || getSidebandStreamChanged() || getAutoRefresh() ||
+    return hasFrameUpdate() || getSidebandStreamChanged() || shouldAutoRefresh() ||
             getConfigurationChanged();
 }
 

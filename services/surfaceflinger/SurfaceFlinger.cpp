@@ -866,6 +866,43 @@ void SurfaceFlinger::init() {
     ALOGV("Done initializing");
 }
 
+bool SurfaceFlinger::updateCurrentHwcLayer() {
+    using aidl::android::hardware::graphics::composer3::Composition;
+
+    // Get the display that the main layer stack is presented on.
+    const auto* display = FTL_FAKE_GUARD(mStateLock, getDefaultDisplayDeviceLocked()).get();
+
+    mCurrentHwcLayer = nullptr;
+
+    // We can avoid updating the hwc layer if the target display has only one visible layer
+    // and uses device composition.
+    std::vector<Layer*> visibleLayers{};
+    traverseLayersInLayerStack(display->getLayerStack(), CaptureArgs::UNSET_UID,
+                               [&visibleLayers](Layer* layer) { visibleLayers.push_back(layer); });
+    if (visibleLayers.size() == 1) {
+        Layer* layer = visibleLayers[0];
+
+        if (layer->getCompositionType(*display) != Composition::DEVICE) {
+            return false;
+        }
+
+        const auto& displays = FTL_FAKE_GUARD(mStateLock, mDisplays);
+        for (const auto& pair : displays) {
+            const auto cd = pair.second->getCompositionDisplay();
+            if (pair.second != display &&
+                cd->includesLayer({layer->getLayerStack(), layer->isInternalDisplayOverlay()})) {
+                // The same layer is present on another display (e.g. a GPU-composited virtual
+                // display set up by screenrecord) so we cannot skip the composition pass.
+                return false;
+            }
+        }
+
+        mCurrentHwcLayer = layer;
+    }
+
+    return mCurrentHwcLayer != nullptr;
+}
+
 void SurfaceFlinger::readPersistentProperties() {
     Mutex::Autolock _l(mStateLock);
 
@@ -2634,6 +2671,13 @@ void SurfaceFlinger::postComposition() {
     if (ATRACE_ENABLED()) {
         // getTotalSize returns the total number of buffers that were allocated by SurfaceFlinger
         ATRACE_INT64("Total Buffer Size", GraphicBufferAllocator::get().getTotalSize());
+    }
+
+    bool hadHwcLayer = (mCurrentHwcLayer != nullptr);
+    if (!updateCurrentHwcLayer() && hadHwcLayer) {
+        // Invalidate after disabling the optimization to force BufferQueueLayer to
+        // re-check mCurrentHwcLayer.
+        onLayerUpdate();
     }
 }
 

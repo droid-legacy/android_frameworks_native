@@ -171,6 +171,19 @@ void BufferQueueLayer::latchBufferConsumerFlags() {
     mDrawingState.autoRefresh = mConsumer->getAutoRefresh();
 }
 
+bool BufferQueueLayer::shouldAutoRefresh() const {
+    if (mDrawingState.autoRefresh) {
+        sp<Layer> layer = mFlinger->mCurrentHwcLayer.promote();
+        // If auto-refresh mode is enabled on this particular layer, and it's the
+        // only visible layer on the primary display, we can treat it as if it's
+        // unchanged and skip the refresh. This is possible because the hardware
+        // composer already shares the underlying buffer with the producer.
+        return layer == nullptr || this != layer.get();
+    }
+
+    return false;
+}
+
 status_t BufferQueueLayer::updateTexImage(bool& recomputeVisibleRegions, nsecs_t latchTime,
                                           nsecs_t expectedPresentTime) {
     // This boolean is used to make sure that SurfaceFlinger's shadow copy
@@ -293,7 +306,7 @@ status_t BufferQueueLayer::updateTexImage(bool& recomputeVisibleRegions, nsecs_t
 
     // Decrement the queued-frames count.  Signal another event if we
     // have more frames pending.
-    if ((queuedBuffer && more_frames_pending) || mDrawingState.autoRefresh) {
+    if ((queuedBuffer && more_frames_pending) || shouldAutoRefresh()) {
         mFlinger->onLayerUpdate();
     }
 

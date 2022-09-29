@@ -99,6 +99,7 @@ private:
     void setTransformHint(ui::Transform::RotationFlags displayTransformHint) override;
 
     bool hasFrameUpdate() const override;
+    bool shouldAutoRefresh() const override;
 
     status_t updateTexImage(bool& recomputeVisibleRegions, nsecs_t latchTime,
                             nsecs_t expectedPresentTime) override;

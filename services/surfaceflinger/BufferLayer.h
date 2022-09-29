@@ -184,6 +184,10 @@ protected:
     // See IConsumerListener::onConfigurationChanged
     virtual void latchBufferConsumerFlags(){};
 
+    // Returns true if this layer must be updated even if no new frames were
+    // explicitly queued.
+    virtual bool shouldAutoRefresh() const { return getAutoRefresh(); }
+
 private:
     virtual bool fenceHasSignaled() const = 0;
     virtual bool framePresentTimeIsCurrent(nsecs_t expectedPresentTime) const = 0;
