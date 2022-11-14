@@ -43,6 +43,9 @@ cc_defaults {
     sanitize: {
         misc_undefined: ["bounds"],
     },
+    lto: {
+        thin: true,
+    },
     tidy: true,
     tidy_checks: [
         "-*", // Disable all checks not explicitly enabled for now
