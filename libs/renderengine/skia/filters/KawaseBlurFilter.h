@@ -36,7 +36,7 @@ namespace skia {
 class KawaseBlurFilter: public BlurFilter {
 public:
     // Maximum number of render passes
-    static constexpr uint32_t kMaxPasses = 4;
+    static constexpr uint32_t kMaxPasses = 8;
 
     explicit KawaseBlurFilter();
     virtual ~KawaseBlurFilter(){}
