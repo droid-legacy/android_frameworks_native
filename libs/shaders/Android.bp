@@ -48,4 +48,9 @@ cc_library_static {
     srcs: [
         "shaders.cpp",
     ],
+    
+    lto: {
+        thin: true,
+    },
+    whole_program_vtables: true, // Requires ThinLTO
 }

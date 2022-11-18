@@ -53,6 +53,7 @@ cc_library {
         "-Wno-missing-field-initializers",
         "-Wno-unused-variable",
         "-Wno-unused-parameter",
+        "-O3",
     ],
 
     export_include_dirs: ["include"],
