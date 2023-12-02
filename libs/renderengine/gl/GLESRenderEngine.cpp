@@ -973,8 +973,9 @@ void GLESRenderEngine::unbindFrameBuffer(Framebuffer* /*framebuffer*/) {
 }
 
 bool GLESRenderEngine::canSkipPostRenderCleanup() const {
-    return mPriorResourcesCleaned ||
-            (mLastDrawFence != nullptr && mLastDrawFence->getStatus() != Fence::Status::Signaled);
+//    return mPriorResourcesCleaned ||
+//            (mLastDrawFence != nullptr && mLastDrawFence->getStatus() != Fence::Status::Signaled);
+      return true;
 }
 
 void GLESRenderEngine::cleanupPostRender() {
